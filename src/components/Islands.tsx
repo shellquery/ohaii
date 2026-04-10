@@ -21,6 +21,7 @@ export default function Islands() {
                   alt={island.name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
                 <div className={`absolute inset-0 bg-gradient-to-t ${island.color} opacity-30 group-hover:opacity-20 transition-opacity`} />
                 <div className="absolute top-3 left-3">

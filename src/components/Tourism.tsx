@@ -58,6 +58,7 @@ export default function Tourism() {
                   alt={item.name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
                 <span className={`absolute top-2 left-2 tag ${categoryColors[item.category] ?? 'bg-gray-100 text-gray-700'}`}>
                   {item.category}
