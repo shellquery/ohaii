@@ -4,6 +4,3 @@ dist/
 .env.local
 .DS_Store
 *.log
-client/node_modules/
-server/node_modules/
-client/dist/
