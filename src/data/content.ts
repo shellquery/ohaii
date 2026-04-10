@@ -12,7 +12,7 @@ const shared = {
     subtitle: 'The Aloha State — Where Paradise Meets the Pacific',
     description: '8 islands of breathtaking beauty, ancient culture, and warm hospitality awaiting you.',
     cta: 'Start Exploring',
-    img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&auto=format&fit=crop&q=80',
+    img: '/images/hero.jpg',
   },
   map: {
     title: 'Interactive Map',

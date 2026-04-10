@@ -1,0 +1,71 @@
+name: Download Images
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - claude/hawaii-travel-guide-app-Nv7Xl
+    paths:
+      - '.github/workflows/download-images.yml'
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/hawaii-travel-guide-app-Nv7Xl
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download images from Unsplash
+        run: |
+          mkdir -p public/images
+
+          download_image() {
+            local url="$1"
+            local filename="$2"
+            local output="public/images/$filename"
+            echo "Downloading $filename..."
+            curl -sL --max-time 30 "$url" -o "$output"
+            if [ $? -ne 0 ] || [ ! -s "$output" ]; then
+              echo "FAILED: $filename"
+              rm -f "$output"
+            else
+              echo "OK: $filename ($(wc -c < "$output") bytes)"
+            fi
+          }
+
+          download_image "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&auto=format&fit=crop&q=80" "hero.jpg"
+          download_image "https://images.unsplash.com/photo-1598135753163-6167c1a1ad65?w=800&auto=format&fit=crop&q=80" "oahu.jpg"
+          download_image "https://images.unsplash.com/photo-oi68nSjlUak?w=800&auto=format&fit=crop&q=80" "maui.jpg"
+          download_image "https://images.unsplash.com/photo-1589197331516-4d84b72ebde3?w=800&auto=format&fit=crop&q=80" "bigisland.jpg"
+          download_image "https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=800&auto=format&fit=crop&q=80" "kauai.jpg"
+          download_image "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop&q=80" "molokai.jpg"
+          download_image "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop&q=80" "lanai.jpg"
+          download_image "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&auto=format&fit=crop&q=80" "aloha.jpg"
+          download_image "https://images.unsplash.com/photo-cWxVs0R4jSM?w=800&auto=format&fit=crop&q=80" "hula.jpg"
+          download_image "https://images.unsplash.com/photo-794Dbzn7YSE?w=800&auto=format&fit=crop&q=80" "lei.jpg"
+          download_image "https://images.unsplash.com/photo-IQyZ3SYuGlw?w=800&auto=format&fit=crop&q=80" "luau.jpg"
+          download_image "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80" "waikiki.jpg"
+          download_image "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&auto=format&fit=crop&q=80" "pearlharbor.jpg"
+          download_image "https://images.unsplash.com/photo-9HbAjlblA3k?w=800&auto=format&fit=crop&q=80" "hana.jpg"
+          download_image "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=800&auto=format&fit=crop&q=80" "surfing.jpg"
+          download_image "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop&q=80" "haleakala.jpg"
+          download_image "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop&q=80" "snorkeling.jpg"
+
+          echo "--- Downloaded files ---"
+          ls -lh public/images/
+
+      - name: Commit and push images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/images/
+          if git diff --staged --quiet; then
+            echo "No new images to commit."
+          else
+            git commit -m "feat: add local copies of Hawaii travel images"
+            git push origin claude/hawaii-travel-guide-app-Nv7Xl
+          fi

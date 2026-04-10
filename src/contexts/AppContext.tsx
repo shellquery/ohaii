@@ -16,7 +16,7 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Lang>(() => {
-    return (localStorage.getItem('ohaii-lang') as Lang) || 'zh';
+    return (localStorage.getItem('ohaii-lang') as Lang) || 'en';
   });
   const [theme, setTheme] = useState<Theme>(() => {
     return (localStorage.getItem('ohaii-theme') as Theme) || 'light';
