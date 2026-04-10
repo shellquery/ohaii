@@ -53,7 +53,7 @@ export default function MapSection() {
             center={[20.5, -157.5]}
             zoom={7}
             style={{ height: '100%', width: '100%' }}
-            scrollWheelZoom={false}
+            scrollWheelZoom={true}
           >
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
