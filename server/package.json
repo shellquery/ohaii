@@ -1,0 +1,14 @@
+{
+  "name": "ohaii-server",
+  "version": "1.0.0",
+  "description": "Hawaii Travel Guide - Express Server",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}
