@@ -23,39 +23,45 @@ jobs:
         run: |
           mkdir -p public/images
 
+          # Download and validate — file must be at least 10 KB to count as success
           download_image() {
             local url="$1"
             local filename="$2"
             local output="public/images/$filename"
-            echo "Downloading $filename..."
-            curl -sL --max-time 30 "$url" -o "$output"
-            if [ $? -ne 0 ] || [ ! -s "$output" ]; then
-              echo "FAILED: $filename"
+            echo "Downloading $filename from $url ..."
+            curl -sL --max-time 60 -A "Mozilla/5.0" "$url" -o "$output"
+            local size
+            size=$(wc -c < "$output" 2>/dev/null || echo 0)
+            if [ "$size" -lt 10000 ]; then
+              echo "FAILED: $filename ($size bytes)"
               rm -f "$output"
             else
-              echo "OK: $filename ($(wc -c < "$output") bytes)"
+              echo "OK: $filename ($size bytes)"
             fi
           }
 
+          # Old-style IDs: use photo- prefix
           download_image "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&auto=format&fit=crop&q=80" "hero.jpg"
           download_image "https://images.unsplash.com/photo-1598135753163-6167c1a1ad65?w=800&auto=format&fit=crop&q=80" "oahu.jpg"
-          download_image "https://images.unsplash.com/photo-oi68nSjlUak?w=800&auto=format&fit=crop&q=80" "maui.jpg"
           download_image "https://images.unsplash.com/photo-1589197331516-4d84b72ebde3?w=800&auto=format&fit=crop&q=80" "bigisland.jpg"
           download_image "https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=800&auto=format&fit=crop&q=80" "kauai.jpg"
           download_image "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop&q=80" "molokai.jpg"
           download_image "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop&q=80" "lanai.jpg"
           download_image "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&auto=format&fit=crop&q=80" "aloha.jpg"
-          download_image "https://images.unsplash.com/photo-cWxVs0R4jSM?w=800&auto=format&fit=crop&q=80" "hula.jpg"
-          download_image "https://images.unsplash.com/photo-794Dbzn7YSE?w=800&auto=format&fit=crop&q=80" "lei.jpg"
-          download_image "https://images.unsplash.com/photo-IQyZ3SYuGlw?w=800&auto=format&fit=crop&q=80" "luau.jpg"
           download_image "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80" "waikiki.jpg"
           download_image "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&auto=format&fit=crop&q=80" "pearlharbor.jpg"
-          download_image "https://images.unsplash.com/photo-9HbAjlblA3k?w=800&auto=format&fit=crop&q=80" "hana.jpg"
           download_image "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=800&auto=format&fit=crop&q=80" "surfing.jpg"
           download_image "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop&q=80" "haleakala.jpg"
           download_image "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop&q=80" "snorkeling.jpg"
 
-          echo "--- Downloaded files ---"
+          # New short-style IDs: no photo- prefix
+          download_image "https://images.unsplash.com/oi68nSjlUak?w=800&auto=format&fit=crop&q=80" "maui.jpg"
+          download_image "https://images.unsplash.com/cWxVs0R4jSM?w=800&auto=format&fit=crop&q=80" "hula.jpg"
+          download_image "https://images.unsplash.com/794Dbzn7YSE?w=800&auto=format&fit=crop&q=80" "lei.jpg"
+          download_image "https://images.unsplash.com/IQyZ3SYuGlw?w=800&auto=format&fit=crop&q=80" "luau.jpg"
+          download_image "https://images.unsplash.com/9HbAjlblA3k?w=800&auto=format&fit=crop&q=80" "hana.jpg"
+
+          echo "--- Result ---"
           ls -lh public/images/
 
       - name: Commit and push images
@@ -64,8 +70,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add public/images/
           if git diff --staged --quiet; then
-            echo "No new images to commit."
+            echo "No changes to commit."
           else
-            git commit -m "feat: add local copies of Hawaii travel images"
+            git commit -m "feat: add remaining Hawaii travel images"
             git push origin claude/hawaii-travel-guide-app-Nv7Xl
           fi
